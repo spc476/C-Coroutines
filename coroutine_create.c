@@ -20,15 +20,10 @@ int coroutine_create(
   assert(fun);
   
   if (stsize == 0)
-    stsize = 65536u;
-    
-  co->base = NULL;
-  co->size = 0;
-  co->sp   = NULL;
-  co->bp   = NULL;
-  co->ysp  = NULL;
-  co->ybp  = NULL;
+    stsize = 4192;
   
+  memset(co,0,sizeof(coroutine__s));
+
   co->size = stsize;
   co->base = calloc(1,stsize);
   if (co->base == NULL)
