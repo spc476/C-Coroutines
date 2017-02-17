@@ -86,7 +86,7 @@ int main(int argc,char **argv)
   
   printf("---------\n");
   
-  if (false)
+  if (true)
   {
     coroutine__s co1;
     coroutine__s co2;
@@ -98,7 +98,7 @@ int main(int argc,char **argv)
     
     for (int i = 0 , r = 0 ; i < 10 ; i++)
     {
-//      r = coroutine_resume(&co1,r);
+      r = coroutine_resume(&co1,r);
       r = coroutine_resume(&co2,r + 200);
       r = coroutine_resume(&co3,r + 300);
     }
