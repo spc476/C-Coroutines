@@ -78,6 +78,17 @@
 
 ;===========================================================================
 
+%assign P_param		12
+%assign P_co		8
+
+do_abort:	enter	0,0
+		push	dword [ebp + P_param]
+		push	dword [ebp + P_co]
+		call	coroutine_yield
+		jmp	abort
+
+;===========================================================================
+
 %assign	P_fun		16
 %assign	P_param		12
 %assign P_co		8
@@ -103,13 +114,16 @@ coroutine_init:
 		add	esp,8
 		pop	edx
 
-		SYSLOG	"init: post-co=%08X",esp
+	;-------------------------------------------------------------------
+	; Coroutine finished, so let's yield its result one more time.  Only
+	; this time, the code to yield will call abort if it's resumed.
+	; We won't return from this.
+	;-------------------------------------------------------------------
 
-		mov	esp,[edx + co.ysp]
-		mov	ebp,[edx + co.ybp]
-
-		leave
-		ret
+		push	eax
+		push	edx
+		call	do_abort
+		jmp	abort
 
 ;===========================================================================
 
