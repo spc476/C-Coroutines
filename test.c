@@ -1,16 +1,16 @@
 
+#include <inttypes.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <cgilib6/crashreport.h>
+#include <syslog.h>
 #include "coroutine.h"
-
-coroutine__s g_co;
 
 /**************************************************************************/
 
 static uintptr_t foo(coroutine__s *self,uintptr_t d)
 {
-  d = coroutine_yield(&g_co,self,d);
+  d = coroutine_yield(self,d);
   return d;
 }
  
@@ -30,7 +30,7 @@ static uintptr_t routine2(coroutine__s *self,uintptr_t d)
   while(true)
   {
     printf("routine2=%lu\n",(unsigned long)d);
-    d = coroutine_yield(&g_co,self,d + 1);
+    d = coroutine_yield(self,d + 1);
   }
 }
 
@@ -41,36 +41,68 @@ static uintptr_t routine3(coroutine__s *self,uintptr_t d)
   while(true)
   {
     printf("routine3=%lu\n",(unsigned long)d);
-    d = coroutine_yield(&g_co,self,d + 2);
+    d = coroutine_yield(self,d + 2);
   }
+}
+
+/**************************************************************************/
+
+static uintptr_t test(coroutine__s *self,uintptr_t d)
+{
+  syslog(LOG_DEBUG,"test HELLO");
+  printf("Hello %" PRIuPTR "\n",d);
+  d = coroutine_yield(self,d + 10);
+  syslog(LOG_DEBUG,"test YIELD");
+  printf("Goodbye %" PRIuPTR "\n",d);
+  return d + 10;
 }
 
 /**************************************************************************/
 
 int main(void)
 {
-  coroutine__s co1;
-  coroutine__s co2;
-  coroutine__s co3;
-  
   crashreport(SIGSEGV);
   crashreport(SIGILL);
+  crashreport(SIGABRT);
   
-  coroutine_self(&g_co);
-  coroutine_create(&co1,0,routine1,   0);
-  coroutine_create(&co2,0,routine2,1000);
-  coroutine_create(&co3,0,routine3,2000);
+  syslog(LOG_INFO,"STARTING");
   
-  for (int i = 0 , r = 0 ; i < 10 ; i++)
   {
-    r = coroutine_yield(&co1,&g_co,r);
-    r = coroutine_yield(&co2,&g_co,r);
-    r = coroutine_yield(&co3,&g_co,r);
+    coroutine__s co;
+    uintptr_t    r;
+    
+    r = coroutine_create(&co,0,test,0);
+    syslog(LOG_DEBUG,"done with coroutine_create()");
+    printf("test1=%" PRIuPTR "\n",r);
+//    r = coroutine_resume(&co,r);
+//    printf("test2=%" PRIuPTR "\n",r);
+//    r = coroutine_resume(&co,r);
+//    printf("test3=%" PRIuPTR "\n",r);
   }
   
-  coroutine_free(&co3);
-  coroutine_free(&co2);
-  coroutine_free(&co1);
+  printf("In the middle\n");
+  
+  if (false)
+  {
+    coroutine__s co1;
+    coroutine__s co2;
+    coroutine__s co3;
+    
+    coroutine_create(&co1,0,routine1,   0);
+    coroutine_create(&co2,0,routine2,1000);
+    coroutine_create(&co3,0,routine3,2000);
+    
+    for (int i = 0 , r = 0 ; i < 10 ; i++)
+    {
+      r = coroutine_yield(&co1,r);
+      r = coroutine_yield(&co2,r);
+      r = coroutine_yield(&co3,r);
+    }
+    
+    coroutine_free(&co3);
+    coroutine_free(&co2);
+    coroutine_free(&co1);
+  }
   
   return 0;
 }

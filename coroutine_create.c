@@ -8,9 +8,9 @@
 #include <syslog.h>
 #include "coroutine.h"
 
-extern void coroutine_init(coroutine__s *,uintptr_t (*)(coroutine__s *,uintptr_t),uintptr_t);
+extern uintptr_t coroutine_init(coroutine__s *,uintptr_t,uintptr_t (*)(coroutine__s *,uintptr_t));
 
-int coroutine_create(
+uintptr_t coroutine_create(
         coroutine__s  *co,
         size_t         stsize,
         uintptr_t    (*fun)(coroutine__s *,uintptr_t),
@@ -26,7 +26,6 @@ int coroutine_create(
   if (co->base == NULL)
     return errno;
   
-  coroutine_init(co,fun,param);
-  return 0;
+  return coroutine_init(co,param,fun);
 }
 

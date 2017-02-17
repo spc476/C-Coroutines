@@ -11,7 +11,7 @@ AR       = ar rscu
 	$(AR) $@ $?
 
 %.o : %.asm
-	$(ASM) $(ASMFLAGS) -o $@ $<
+	$(ASM) $(ASMFLAGS) -l $(*F).list -o $@ $<
 
 .PHONY  : all clean
 all     : test sstest
