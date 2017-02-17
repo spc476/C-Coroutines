@@ -67,6 +67,7 @@ int main(void)
   
   syslog(LOG_INFO,"STARTING");
   
+  if (false)
   {
     coroutine__s co;
     uintptr_t    r;
@@ -76,30 +77,28 @@ int main(void)
     printf("test1=%" PRIuPTR "\n",r);
     r = coroutine_resume(&co,r);
     printf("test2=%" PRIuPTR "\n",r);
-//    r = coroutine_resume(&co,r);
-//    printf("test3=%" PRIuPTR "\n",r);
   }
   
   printf("In the middle\n");
   
-  if (false)
+  if (true)
   {
     coroutine__s co1;
     coroutine__s co2;
     coroutine__s co3;
     
-    coroutine_create(&co1,0,routine1,   0);
+//    coroutine_create(&co1,0,routine1,   0);
     coroutine_create(&co2,0,routine2,1000);
     coroutine_create(&co3,0,routine3,2000);
     
     for (int i = 0 , r = 0 ; i < 10 ; i++)
     {
-      r = coroutine_yield(&co1,r);
-      r = coroutine_yield(&co2,r);
-      r = coroutine_yield(&co3,r);
+//      r = coroutine_resume(&co1,r);
+      r = coroutine_resume(&co2,r);
+//      r = coroutine_resume(&co3,r);
     }
     
-    coroutine_free(&co3);
+//    coroutine_free(&co3);
     coroutine_free(&co2);
     coroutine_free(&co1);
   }

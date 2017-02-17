@@ -22,9 +22,9 @@ uintptr_t coroutine_create(
     
   co->sp   = NULL;
   co->size = stsize == 0 ? 65536u : stsize;
-  co->base = malloc(stsize);
+  co->base = calloc(1,stsize);
   if (co->base == NULL)
-    return errno;
+    abort();
   
   return coroutine_init(co,param,fun);
 }
