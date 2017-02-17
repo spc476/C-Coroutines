@@ -19,60 +19,26 @@
 
 ;***************************************************************************
 
-%macro	SYSLOG	1
-	section	.rodata
-%%text		db	%1,0
-	section	.text
-		pusha
-		push	%%text
-		push	7
-		call	syslog
-		add	esp,8
-		popa
+%macro	SYSLOGP	1-*
+	%rep %0				; push parameters onto the stack
+	%rotate -1			; going from right to left
+		push	%1		; to mimic the C convention
+	%endrep
 %endmacro
 
-%macro	SYSLOG	2
+%macro	SYSLOG	1-*
 	section	.rodata
-%%text		db	%1,0
+%%text		db	%1,0		; string reference
 	section	.text
-		pusha
-		push	%2
-		push	%%text
-		push	7
-		call	syslog
-		add	esp,12
-		popa
+		pusha			; save all registers
+		SYSLOGP	%{2:-1}		; push all parameters exept 1st
+		push	%%text		; push label to string (1st parameter)
+		push	7		; LOG_DEBUG
+		call	syslog		; do that syslog() call
+		add	esp,(4 * %0) + 4 ; remove stacked parameters
+		popa			; and finally restore all registers
 %endmacro
 
-%macro	SYSLOG	3
-	section	.rodata
-%%text		db	%1,0
-	section	.text
-		pusha
-		push	%3
-		push	%2
-		push	%%text
-		push	7
-		call	syslog
-		add	esp,16
-		popa
-%endmacro
-
-%macro	SYSLOG	4
-	section	.rodata
-%%text		db	%1,0
-	section	.text
-		pusha
-		push	%4
-		push	%3
-		push	%2
-		push	%%text
-		push	7
-		call	syslog
-		add	esp,20
-		popa
-%endmacro
-			
 ;***************************************************************************
 		section	.text
 
