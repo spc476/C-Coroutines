@@ -27,6 +27,7 @@
 %endmacro
 
 %macro	SYSLOG	1-*
+%ifndef NDEBUG
 	section	.rodata
 %%text		db	%1,0		; string reference
 	section	.text
@@ -37,6 +38,7 @@
 		call	syslog		; do that syslog() call
 		add	esp,(4 * %0) + 4 ; remove stacked parameters
 		popa			; and finally restore all registers
+%endif
 %endmacro
 
 ;***************************************************************************
