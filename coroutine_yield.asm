@@ -105,15 +105,46 @@ coroutine_init:
 		mov	eax,[edx + co.base]
 		add	eax,[edx + co.size]
 
-		lea	ecx,[eax - 16]
-		mov	[edx + co.csp],ecx
-		mov	[edx + co.cbp],ecx
+	;------------------------------------------------------------
+	; Create the stack for resuming to start_it_up().  The stack
+	; is set up as:
+	;
+	;       EAX ->
+	;		+--------------------------+
+	;		| L_co                     |
+	;		+--------------------------+
+	;		| L_fun                    |
+	;		+--------------------------+
+	;		| start_it_up              |
+	;		+--------------------------+
+	;     co.cbp -> | EBP of start_it_up (EAX) |
+	;		+--------------------------+
+	;		| "saved" EBX (0)          |
+	;		+--------------------------+
+	;		| "saved" ESI (0)          |
+	;		+--------------------------+
+	;     co.csp -> | "saved" EDI (0)          |
+	;		+--------------------------+
+	;
+	; The code in coroutine.resume() will pop the three registers off
+	; the stack, then restore EBP/ESP and "return" to start_it_up.
+	;------------------------------------------------------------
 
-		mov	[ecx],eax
+		lea	ecx,[eax - 16]
+
+		mov	[ecx],eax		; "previous" EBP
 		mov	dword [ecx + 4],start_it_up
 		mov	eax,[ebp + P_fun]
 		mov	[ecx + 8],eax
 		mov	[ecx + 12],edx
+
+		mov	[edx + co.cbp],ecx	; coroutine EBP
+		sub	ecx,12			; three "saved" registers
+		mov	[edx + co.csp],ecx	; coroutine ESP
+		xor	eax,eax			; zero out "saved" registers
+		mov	[ecx],eax
+		mov	[ecx + 4],eax
+		mov	[ecx + 8],eax
 
 		leave
 		ret
@@ -125,6 +156,9 @@ coroutine_init:
 
 coroutine_resume:
 		enter	0,0
+		push	ebx
+		push	esi
+		push	edi
 
 		mov	eax,[ebp + P_param]
 		mov	edx,[ebp + P_co]
@@ -138,6 +172,9 @@ coroutine_resume:
 
 		SYSLOG	"resume: RET=%08X",dword [ebp + 4]
 
+		pop	edi
+		pop	esi
+		pop	ebx
 		leave
 		ret
 
@@ -148,6 +185,9 @@ coroutine_resume:
 
 coroutine_yield:
 		enter	0,0
+		push	ebx
+		push	esi
+		push	edi
 
 		mov	eax,[ebp + P_param]
 		mov	edx,[ebp + P_co]	; return parameter
@@ -161,6 +201,9 @@ coroutine_yield:
 
 		SYSLOG	"yield: RET=%08X",dword [ebp + 4]
 
+		pop	edi
+		pop	esi
+		pop	ebx
 		leave
 		ret
 
