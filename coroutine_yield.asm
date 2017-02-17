@@ -92,10 +92,7 @@ coroutine_init:
 		mov	[edx + co.ysp],esp
 		mov	[edx + co.ybp],ebp
 		mov	[edx + co.csp],eax
-	;	mov	[edx + co.cbp],eax
-
 		mov	esp,eax
-	;	mov	ebp,eax
 
 		SYSLOG	"init: FROM=%08X TO=%08X",ebp,dword [edx + co.cbp]
 		
