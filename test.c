@@ -18,7 +18,7 @@ static uintptr_t routine1(coroutine__s *self,uintptr_t d)
 {
   while(true)
   {
-    printf("routine1=%lu\n",(unsigned long)d);
+    printf("routine1=%" PRIuPTR "\n",d);
     d = foo(self,d + 100);
   }
 }
@@ -29,7 +29,7 @@ static uintptr_t routine2(coroutine__s *self,uintptr_t d)
 {
   while(true)
   {
-    printf("routine2=%lu\n",(unsigned long)d);
+    printf("routine2=%" PRIuPTR "\n",d);
     d = coroutine_yield(self,d + 1);
   }
 }
@@ -40,7 +40,7 @@ static uintptr_t routine3(coroutine__s *self,uintptr_t d)
 {
   while(true)
   {
-    printf("routine3=%lu\n",(unsigned long)d);
+    printf("routine3=%" PRIuPTR "\n",d);
     d = coroutine_yield(self,d + 2);
   }
 }
@@ -59,46 +59,51 @@ static uintptr_t test(coroutine__s *self,uintptr_t d)
 
 /**************************************************************************/
 
-int main(void)
+int main(int argc,char **argv)
 {
   crashreport(SIGSEGV);
   crashreport(SIGILL);
   crashreport(SIGABRT);
-  
+
+  (void)argv;
   syslog(LOG_INFO,"STARTING");
   
-  if (false)
+  if (true)
   {
     coroutine__s co;
     uintptr_t    r;
     
-    r = coroutine_create(&co,0,test,0);
+    syslog(LOG_DEBUG,"argc=%p",(void *)&argc);
+    coroutine_create(&co,0,test);
     syslog(LOG_DEBUG,"done with coroutine_create()");
+    r = coroutine_resume(&co,r);
     printf("test1=%" PRIuPTR "\n",r);
     r = coroutine_resume(&co,r);
     printf("test2=%" PRIuPTR "\n",r);
+    syslog(LOG_DEBUG,"argc=%p",(void *)&argc);
+    coroutine_free(&co);
   }
   
-  printf("In the middle\n");
+  printf("---------\n");
   
-  if (true)
+  if (false)
   {
     coroutine__s co1;
     coroutine__s co2;
     coroutine__s co3;
     
-//    coroutine_create(&co1,0,routine1,   0);
-    coroutine_create(&co2,0,routine2,1000);
-    coroutine_create(&co3,0,routine3,2000);
+    coroutine_create(&co1,0,routine1);
+    coroutine_create(&co2,0,routine2);
+    coroutine_create(&co3,0,routine3);
     
     for (int i = 0 , r = 0 ; i < 10 ; i++)
     {
 //      r = coroutine_resume(&co1,r);
-      r = coroutine_resume(&co2,r);
-//      r = coroutine_resume(&co3,r);
+      r = coroutine_resume(&co2,r + 200);
+      r = coroutine_resume(&co3,r + 300);
     }
     
-//    coroutine_free(&co3);
+    coroutine_free(&co3);
     coroutine_free(&co2);
     coroutine_free(&co1);
   }

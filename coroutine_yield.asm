@@ -78,50 +78,47 @@
 
 ;===========================================================================
 
-%assign	P_fun		16
-%assign	P_param		12
+%assign L_co		-4
+%assign L_fun		-8
+
+start_it_up:	push	eax
+		push	dword [ebp + L_co]
+		call	[ebp + L_fun]
+
+		push	eax
+		push	dword [ebp + L_co]
+		call	coroutine_yield
+		jmp	abort
+
+;===========================================================================
+
+%assign	P_fun		12
 %assign P_co		8
 
 coroutine_init:
-		enter	0,0
-
-		SYSLOG	"init: RET=%08X",dword [ebp + 4]
+		;enter	0,0
+		push	ebp
+		mov	ebp,esp
 
 		mov	edx,[ebp + P_co]
-		mov	[edx + co.ysp],esp	; save ESP/EBP
-		mov	[edx + co.ybp],ebp	; to yield to
-		mov	eax,[edx + co.base]	; get new stack
-		add	eax,[edx + co.size]
-		mov	esp,eax
-
-		push	dword [ebp + P_fun]	; move stack frame from
-		push	dword [ebp + P_param]	; parent stack to
-		push	dword [ebp + P_co]	; coroutine stack
-		push	dword [ebp + 4]
-		enter	0,0
-
-		mov	[edx + co.csp],esp	; save ESP/EBP on coroutine
-		mov	[edx + co.cbp],ebp	; stack
-
-		SYSLOG	"init: co=%08X FROM=%08X TO=%08X",edx,dword [edx + co.ybp],dword [edx + co.cbp]
 		
-		push	edx			; save pointer to _co
-		push	dword [ebp + P_param]	; call passed in function
-		push	edx
-		call	[ebp + P_fun]
-		add	esp,8
-		pop	edx			; get _co
+		SYSLOG	"init: stack=%08X",dword [edx + co.base]
 
-	;-------------------------------------------------------------------
-	; Coroutine finished, so let's yield its result one more time.  Only
-	; this time, the code to yield will call abort if it's resumed.
-	; We won't return from this.
-	;-------------------------------------------------------------------
+		mov	eax,[edx + co.base]
+		add	eax,[edx + co.size]
 
-		push	eax
-		push	edx
-		call	coroutine_yield
-		jmp	abort
+		lea	ecx,[eax - 16]
+		mov	[edx + co.csp],ecx
+		mov	[edx + co.cbp],ecx
+
+		mov	[ecx],eax
+		mov	dword [ecx + 4],start_it_up
+		mov	eax,[ebp + P_fun]
+		mov	[ecx + 8],eax
+		mov	[ecx + 12],edx
+
+		leave
+		ret
 
 ;===========================================================================
 
@@ -129,7 +126,10 @@ coroutine_init:
 %assign P_co		8
 
 coroutine_resume:
-		enter	0,0
+		;enter	0,0
+		push	ebp
+		mov	ebp,esp
+
 		mov	eax,[ebp + P_param]
 		mov	edx,[ebp + P_co]
 
@@ -141,6 +141,7 @@ coroutine_resume:
 		mov	ebp,[edx + co.cbp]
 
 		SYSLOG	"resume: RET=%08X",dword [ebp + 4]
+
 		leave
 		ret
 
@@ -150,7 +151,10 @@ coroutine_resume:
 %assign	P_co		8
 
 coroutine_yield:
-		enter	0,0
+		;enter	0,0
+		push	ebp
+		mov	ebp,esp
+
 		mov	eax,[ebp + P_param]
 		mov	edx,[ebp + P_co]	; return parameter
 
@@ -162,6 +166,7 @@ coroutine_yield:
 		mov	ebp,[edx + co.ybp]
 
 		SYSLOG	"yield: RET=%08X",dword [ebp + 4]
+
 		leave
 		ret
 

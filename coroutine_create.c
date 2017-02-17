@@ -8,24 +8,34 @@
 #include <syslog.h>
 #include "coroutine.h"
 
-extern uintptr_t coroutine_init(coroutine__s *,uintptr_t,uintptr_t (*)(coroutine__s *,uintptr_t));
+extern void coroutine_init(coroutine__s *,uintptr_t (*)(coroutine__s *,uintptr_t));
 
-uintptr_t coroutine_create(
+int coroutine_create(
         coroutine__s  *co,
         size_t         stsize,
-        uintptr_t    (*fun)(coroutine__s *,uintptr_t),
-        uintptr_t      param
+        uintptr_t    (*fun)(coroutine__s *,uintptr_t)
 )
 {
   assert(co != NULL);
   assert(fun);
+  
+  if (stsize == 0)
+    stsize = 65536u;
     
+  co->base = NULL;
+  co->size = 0;
   co->sp   = NULL;
-  co->size = stsize == 0 ? 65536u : stsize;
+  co->bp   = NULL;
+  co->ysp  = NULL;
+  co->ybp  = NULL;
+  
+  co->size = stsize;
   co->base = calloc(1,stsize);
   if (co->base == NULL)
-    abort();
+    return errno;
   
-  return coroutine_init(co,param,fun);
+  syslog(LOG_DEBUG,"create: stack=%p",co->base);
+  coroutine_init(co,fun);
+  return 0;
 }
 

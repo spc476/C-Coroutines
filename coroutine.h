@@ -15,7 +15,7 @@ typedef struct
   void   *ybp;
 } coroutine__s;
 
-extern uintptr_t    coroutine_create(coroutine__s *,size_t,uintptr_t (*fun)(coroutine__s *,uintptr_t),uintptr_t);
+extern int          coroutine_create(coroutine__s *,size_t,uintptr_t (*fun)(coroutine__s *,uintptr_t));
 extern uintptr_t    coroutine_resume(coroutine__s *,uintptr_t);
 extern uintptr_t    coroutine_yield (coroutine__s *,uintptr_t);
 extern int          coroutine_free  (coroutine__s *);
