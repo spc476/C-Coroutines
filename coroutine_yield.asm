@@ -96,9 +96,7 @@ start_it_up:	push	eax
 %assign P_co		8
 
 coroutine_init:
-		;enter	0,0
-		push	ebp
-		mov	ebp,esp
+		enter	0,0
 
 		mov	edx,[ebp + P_co]
 		
@@ -126,9 +124,7 @@ coroutine_init:
 %assign P_co		8
 
 coroutine_resume:
-		;enter	0,0
-		push	ebp
-		mov	ebp,esp
+		enter	0,0
 
 		mov	eax,[ebp + P_param]
 		mov	edx,[ebp + P_co]
@@ -151,9 +147,7 @@ coroutine_resume:
 %assign	P_co		8
 
 coroutine_yield:
-		;enter	0,0
-		push	ebp
-		mov	ebp,esp
+		enter	0,0
 
 		mov	eax,[ebp + P_param]
 		mov	edx,[ebp + P_co]	; return parameter
