@@ -97,7 +97,7 @@ coroutine_init:
 		mov	esp,eax
 	;	mov	ebp,eax
 
-		SYSLOG	"init: FROM=%08X TO=%08X",dword [edx + co.ysp],dword [edx + co.csp]
+		SYSLOG	"init: FROM=%08X TO=%08X",ebp,dword [edx + co.cbp]
 		
 		push	edx		; save pointer to _co
 		push	dword [ebp + P_param]
@@ -108,7 +108,8 @@ coroutine_init:
 
 		SYSLOG	"init: post-co=%08X",esp
 
-		push	abort
+		mov	esp,[edx + co.ysp]
+		mov	ebp,[edx + co.ybp]
 
 		leave
 		ret
@@ -122,7 +123,7 @@ coroutine_resume:
 		enter	0,0
 		mov	edx,[ebp + P_co]
 
-		SYSLOG	"resume: FROM=%08X TO=%08X",dword [edx + co.csp],esp
+		SYSLOG	"resume: FROM=%08X TO=%08X",ebp,dword [edx + co.cbp]
 
 		mov	eax,[ebp + P_param]
 		mov	edx,[ebp + P_co]
@@ -144,7 +145,7 @@ coroutine_yield:
 
 		mov	edx,[ebp + P_co]	; return parameter
 
-		SYSLOG	"yield: FROM=%08X TO=%08X",dword [edx + co.csp],dword [edx + co.ysp]
+		SYSLOG	"yield: FROM=%08X TO=%08X",ebp,dword [edx + co.ybp]
 
 		mov	eax,[ebp + P_param]
 		mov	edx,[ebp + P_co]

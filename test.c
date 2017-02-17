@@ -74,8 +74,8 @@ int main(void)
     r = coroutine_create(&co,0,test,0);
     syslog(LOG_DEBUG,"done with coroutine_create()");
     printf("test1=%" PRIuPTR "\n",r);
-//    r = coroutine_resume(&co,r);
-//    printf("test2=%" PRIuPTR "\n",r);
+    r = coroutine_resume(&co,r);
+    printf("test2=%" PRIuPTR "\n",r);
 //    r = coroutine_resume(&co,r);
 //    printf("test3=%" PRIuPTR "\n",r);
   }
