@@ -27,4 +27,4 @@ sstest.o           : coroutine.h
 test.o             : coroutine.h
 
 clean:
-	$(RM) *.o *~ *.a test core.* sstest
+	$(RM) *.o *~ *.a test core.* sstest *.list
