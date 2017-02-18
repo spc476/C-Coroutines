@@ -45,6 +45,27 @@
 		section	.text
 
 ;===========================================================================
+; The stack frame for this routine has been set up *AS IF* the following
+; code had been executed upon entry:
+;
+;		enter	-8,0
+;		mov	eax,[ebp + P_co]
+;		mov	[ebp + L_co],eax
+;		mov	eax,[ebp + P_fun]
+;		mov	[ebp + L_fun],eax
+;		call	some_function_somewhere
+;
+; The code assumes we've just called some_function_somewhere() to retrieve
+; some sort of return code, and then is calling L_fun right afterwards.  The
+; only difference is that in reality, the parameters, return address and
+; previous EBP don't actually exist---just keep that in mind.
+;
+; After L_fun returns, we return it's final return code using
+; coroutine_yield().  How we handle a coroutine_resume() after that is still
+; up in the air.  For right now, I'm just calling abort(), but I could
+; simply have the code just loop, continously returning the paramter passed
+; in from coroutine_resume().  Something to keep in mind.
+;---------------------------------------------------------------------------
 
 %assign L_co		-4
 %assign L_fun		-8
@@ -70,8 +91,8 @@ coroutine_init:
 		
 		SYSLOG	"init: stack=%08X",dword [edx + co.base]
 
-		mov	eax,[edx + co.base]
-		add	eax,[edx + co.size]
+		mov	eax,[edx + co.base]	; point to the top of
+		add	eax,[edx + co.size]	; the coroutine stack.
 
 	;------------------------------------------------------------
 	; Create the stack for resuming to start_it_up().  The stack
@@ -158,7 +179,7 @@ coroutine_yield:
 		push	edi
 
 		mov	eax,[ebp + P_param]
-		mov	edx,[ebp + P_co]	; return parameter
+		mov	edx,[ebp + P_co]
 
 		SYSLOG	"yield: co=%08X FROM=%08X TO=%08X",edx,ebp,dword [edx + co.ybp]
 
