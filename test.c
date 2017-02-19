@@ -76,9 +76,9 @@ int main(int argc,char **argv)
     syslog(LOG_DEBUG,"argc=%p",(void *)&argc);
     coroutine_create(&co,0,test);
     syslog(LOG_DEBUG,"done with coroutine_create()");
-    r = coroutine_resume(co,r);
+    r = coroutine_yield(co,r);
     printf("test1=%" PRIuPTR "\n",r);
-    r = coroutine_resume(co,r);
+    r = coroutine_yield(co,r);
     printf("test2=%" PRIuPTR "\n",r);
     syslog(LOG_DEBUG,"argc=%p",(void *)&argc);
     coroutine_free(co);
@@ -98,9 +98,9 @@ int main(int argc,char **argv)
     
     for (int i = 0 , r = 0 ; i < 10 ; i++)
     {
-      r = coroutine_resume(co1,r);
-      r = coroutine_resume(co2,r + 200);
-      r = coroutine_resume(co3,r + 300);
+      r = coroutine_yield(co1,r);
+      r = coroutine_yield(co2,r + 200);
+      r = coroutine_yield(co3,r + 300);
     }
     
     coroutine_free(co3);

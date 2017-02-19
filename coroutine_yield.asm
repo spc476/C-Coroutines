@@ -1,7 +1,6 @@
 
 		bits	32
 		global	coroutine_init
-		global	coroutine_resume
 		global	coroutine_yield
 		extern	abort
 		extern	syslog
@@ -9,10 +8,9 @@
 ;***************************************************************************
 
 		struc	co
+			.csp:		resd	1
 			.base:		resd	1
 			.size:		resd	1
-			.csp:		resd	1
-			.ysp:		resd	1
 		endstruc
 
 ;***************************************************************************
@@ -116,48 +114,19 @@ coroutine_init:
 	; the stack, then restore EBP/ESP and "return" to start_it_up.
 	;------------------------------------------------------------
 
-		lea	ecx,[eax - 16]
-		mov	[ecx],eax		; "previous" EBP
-		mov	dword [ecx + 4],start_it_up
-		mov	eax,[ebp + P_fun]
-		mov	[ecx + 8],eax
-		mov	[ecx + 12],edx
-
-		sub	ecx,12			; three "saved" registers
-		mov	[edx + co.csp],ecx	; coroutine ESP
-		xor	eax,eax			; zero out "saved" registers
-		mov	[ecx],eax
-		mov	[ecx + 4],eax
-		mov	[ecx + 8],eax
-
+		lea	ecx,[eax - 28]
+		mov	[ecx + 12],eax		; EBP of coroutine
+		mov	[ecx + 24],edx		; L_co
+		mov	eax,[ebp + P_fun]	; L_fun
+		mov	[ecx + 20],eax
+		mov	dword [ecx + 16],start_it_up
+		xor	eax,eax
+		mov	[ecx + 8],eax		; "saved" EBX
+		mov	[ecx + 4],eax		; "saved" ESI
+		mov	[ecx + 0],eax		; "saved" EDI
+		mov	[edx + co.csp],ecx
+		
 		leave
-		ret
-
-;===========================================================================
-
-%assign	P_param		8 + 16
-%assign P_co		4 + 16
-
-coroutine_resume:
-		push	ebp
-		push	ebx
-		push	esi
-		push	edi
-
-		mov	eax,[esp + P_param]
-		mov	edx,[esp + P_co]
-
-		;SYSLOG	"resume: co=%08X FROM=%08X TO=%08X",edx,ebp,dword [edx + co.cbp]
-
-		mov	[edx + co.ysp],esp
-		mov	esp,[edx + co.csp]
-
-		;SYSLOG	"resume: RET=%08X",dword [ebp + 4]
-
-		pop	edi
-		pop	esi
-		pop	ebx
-		pop	ebp
 		ret
 
 ;===========================================================================
@@ -173,13 +142,7 @@ coroutine_yield:
 
 		mov	eax,[esp + P_param]
 		mov	edx,[esp + P_co]
-
-		;SYSLOG	"yield: co=%08X FROM=%08X TO=%08X",edx,ebp,dword [edx + co.ybp]
-
-		mov	[edx + co.csp],esp
-		mov	esp,[edx + co.ysp]
-
-		;SYSLOG	"yield: RET=%08X",dword [ebp + 4]
+		xchg	esp,[edx + co.csp]
 
 		pop	edi
 		pop	esi

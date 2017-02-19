@@ -7,14 +7,12 @@
 
 typedef struct
 {
+  void   *csp;
   void   *base;
   size_t  size;
-  void   *csp;	/* coroutine ESP */
-  void   *ysp;	/* yield-to ESP	 */
 } coroutine__s;
 
 extern int          coroutine_create(coroutine__s **,size_t,uintptr_t (*fun)(coroutine__s *,uintptr_t));
-extern uintptr_t    coroutine_resume(coroutine__s *,uintptr_t);
 extern uintptr_t    coroutine_yield (coroutine__s *,uintptr_t);
 extern int          coroutine_free  (coroutine__s *);
 
