@@ -14,30 +14,6 @@
 		endstruc
 
 ;***************************************************************************
-
-%macro	SYSLOGP	1-*
-	%rep %0				; push parameters onto the stack
-	%rotate -1			; going from right to left
-		push	%1		; to mimic the C convention
-	%endrep
-%endmacro
-
-%macro	SYSLOG	1-*
-%ifndef NDEBUG
-	section	.rodata
-%%text		db	%1,0		; string reference
-	section	.text
-		pusha			; save all registers
-		SYSLOGP	%{2:-1}		; push all parameters exept 1st
-		push	%%text		; push label to string (1st parameter)
-		push	7		; LOG_DEBUG
-		call	syslog		; do that syslog() call
-		add	esp,(4 * %0) + 4 ; remove stacked parameters
-		popa			; and finally restore all registers
-%endif
-%endmacro
-
-;***************************************************************************
 		section	.text
 
 ;===========================================================================
@@ -83,9 +59,6 @@ start_it_up:	push	eax
 coroutine_init:
 		enter	0,0
 		mov	edx,[ebp + P_co]
-		
-		SYSLOG	"init: stack=%08X",dword [edx + co.base]
-
 		mov	eax,[edx + co.base]	; point to the top of
 		add	eax,[edx + co.size]	; the coroutine stack.
 
