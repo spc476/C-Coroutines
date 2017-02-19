@@ -86,7 +86,6 @@ start_it_up:	push	eax
 
 coroutine_init:
 		enter	0,0
-
 		mov	edx,[ebp + P_co]
 		
 		SYSLOG	"init: stack=%08X",dword [edx + co.base]
@@ -120,7 +119,6 @@ coroutine_init:
 	;------------------------------------------------------------
 
 		lea	ecx,[eax - 16]
-
 		mov	[ecx],eax		; "previous" EBP
 		mov	dword [ecx + 4],start_it_up
 		mov	eax,[ebp + P_fun]
