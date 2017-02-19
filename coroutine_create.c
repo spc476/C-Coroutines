@@ -16,6 +16,7 @@ int coroutine_create(
         uintptr_t     (*fun)(coroutine__s *,uintptr_t)
 )
 {
+  char         *blob;
   coroutine__s *co;
   
   assert(pco != NULL);
@@ -24,12 +25,13 @@ int coroutine_create(
   if (stsize == 0)
     stsize = 4192;
   
-  co = calloc(1,stsize);
-  if (co == NULL)
+  blob = calloc(1,stsize);
+  if (blob == NULL)
     return errno;
   
-  co->base = co;
-  co->size = stsize;
+  co       = (coroutine__s *)&blob[stsize - sizeof(coroutine__s)];
+  co->base = blob;
+  co->size = stsize - sizeof(coroutine__s);
 
   syslog(LOG_DEBUG,"create: stack=%p",co->base);
 
