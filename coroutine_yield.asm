@@ -51,7 +51,7 @@ start_it_up:	push	eax
 
 coroutine_init:
 		mov	edx,[esp + P_co]
-		mov	eax,[esp + P_stack]	; point to the top of
+		mov	eax,[esp + P_stack]	; stack to switch to
 
 	;------------------------------------------------------------
 	; Create the stack for resuming to start_it_up().  The stack
@@ -97,16 +97,16 @@ coroutine_init:
 %assign	P_co		4 + 16
 
 coroutine_yield:
-		push	ebp
+		push	ebp			; save callee saved registers
 		push	ebx
 		push	esi
 		push	edi
 
-		mov	eax,[esp + P_param]
-		mov	edx,[esp + P_co]
-		xchg	esp,[edx]
+		mov	eax,[esp + P_param]	; return parameter
+		mov	edx,[esp + P_co]	; get stack to yield to
+		xchg	esp,[edx]		; YIELD!
 
-		pop	edi
+		pop	edi			; retore registers
 		pop	esi
 		pop	ebx
 		pop	ebp
