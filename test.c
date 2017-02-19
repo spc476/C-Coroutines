@@ -70,27 +70,27 @@ int main(int argc,char **argv)
   
   if (true)
   {
-    coroutine__s co;
+    coroutine__s *co;
     uintptr_t    r;
     
     syslog(LOG_DEBUG,"argc=%p",(void *)&argc);
     coroutine_create(&co,0,test);
     syslog(LOG_DEBUG,"done with coroutine_create()");
-    r = coroutine_resume(&co,r);
+    r = coroutine_resume(co,r);
     printf("test1=%" PRIuPTR "\n",r);
-    r = coroutine_resume(&co,r);
+    r = coroutine_resume(co,r);
     printf("test2=%" PRIuPTR "\n",r);
     syslog(LOG_DEBUG,"argc=%p",(void *)&argc);
-    coroutine_free(&co);
+    coroutine_free(co);
   }
   
   printf("---------\n");
   
   if (true)
   {
-    coroutine__s co1;
-    coroutine__s co2;
-    coroutine__s co3;
+    coroutine__s *co1;
+    coroutine__s *co2;
+    coroutine__s *co3;
     
     coroutine_create(&co1,0,routine1);
     coroutine_create(&co2,0,routine2);
@@ -98,14 +98,14 @@ int main(int argc,char **argv)
     
     for (int i = 0 , r = 0 ; i < 10 ; i++)
     {
-      r = coroutine_resume(&co1,r);
-      r = coroutine_resume(&co2,r + 200);
-      r = coroutine_resume(&co3,r + 300);
+      r = coroutine_resume(co1,r);
+      r = coroutine_resume(co2,r + 200);
+      r = coroutine_resume(co3,r + 300);
     }
     
-    coroutine_free(&co3);
-    coroutine_free(&co2);
-    coroutine_free(&co1);
+    coroutine_free(co3);
+    coroutine_free(co2);
+    coroutine_free(co1);
   }
   
   return 0;
