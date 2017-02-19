@@ -6,14 +6,6 @@
 		extern	syslog
 
 ;***************************************************************************
-
-		struc	co
-			.csp:		resd	1
-			.base:		resd	1
-			.size:		resd	1
-		endstruc
-
-;***************************************************************************
 		section	.text
 
 ;===========================================================================
@@ -53,14 +45,13 @@ start_it_up:	push	eax
 
 ;===========================================================================
 
-%assign P_stack		16
-%assign	P_fun		12
-%assign P_co		8
+%assign P_stack		12
+%assign	P_fun		8
+%assign P_co		4
 
 coroutine_init:
-		enter	0,0
-		mov	edx,[ebp + P_co]
-		mov	eax,[ebp + P_stack]	; point to the top of
+		mov	edx,[esp + P_co]
+		mov	eax,[esp + P_stack]	; point to the top of
 
 	;------------------------------------------------------------
 	; Create the stack for resuming to start_it_up().  The stack
@@ -74,13 +65,13 @@ coroutine_init:
 	;		+--------------------------+
 	;		| start_it_up              |
 	;		+--------------------------+
-	;     co.cbp -> | EBP of start_it_up (EAX) |
+	;     co EBP -> | EBP of start_it_up (EAX) |
 	;		+--------------------------+
 	;		| "saved" EBX (0)          |
 	;		+--------------------------+
 	;		| "saved" ESI (0)          |
 	;		+--------------------------+
-	;     co.csp -> | "saved" EDI (0)          |
+	;     co ESP -> | "saved" EDI (0)          |
 	;		+--------------------------+
 	;
 	; The code in coroutine.resume() will pop the three registers off
@@ -90,16 +81,14 @@ coroutine_init:
 		lea	ecx,[eax - 28]
 		mov	[ecx + 12],eax		; EBP of coroutine
 		mov	[ecx + 24],edx		; L_co
-		mov	eax,[ebp + P_fun]	; L_fun
+		mov	eax,[esp + P_fun]	; L_fun
 		mov	[ecx + 20],eax
 		mov	dword [ecx + 16],start_it_up
 		xor	eax,eax
 		mov	[ecx + 8],eax		; "saved" EBX
 		mov	[ecx + 4],eax		; "saved" ESI
 		mov	[ecx + 0],eax		; "saved" EDI
-		mov	[edx + co.csp],ecx
-		
-		leave
+		mov	[edx],ecx		
 		ret
 
 ;===========================================================================
@@ -115,7 +104,7 @@ coroutine_yield:
 
 		mov	eax,[esp + P_param]
 		mov	edx,[esp + P_co]
-		xchg	esp,[edx + co.csp]
+		xchg	esp,[edx]
 
 		pop	edi
 		pop	esi
@@ -124,4 +113,3 @@ coroutine_yield:
 		ret
 
 ;***************************************************************************
-
