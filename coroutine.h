@@ -10,9 +10,7 @@ typedef struct
   void   *base;
   size_t  size;
   void   *csp;	/* coroutine ESP */
-  void   *cbp;	/* coorutine EBP */
   void   *ysp;	/* yield-to ESP	 */
-  void   *ybp;	/* yield-to EBP  */
 } coroutine__s;
 
 extern int          coroutine_create(coroutine__s **,size_t,uintptr_t (*fun)(coroutine__s *,uintptr_t));

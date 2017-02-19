@@ -12,9 +12,7 @@
 			.base:		resd	1
 			.size:		resd	1
 			.csp:		resd	1
-			.cbp:		resd	1
 			.ysp:		resd	1
-			.ybp:		resd	1
 		endstruc
 
 ;***************************************************************************
@@ -125,7 +123,6 @@ coroutine_init:
 		mov	[ecx + 8],eax
 		mov	[ecx + 12],edx
 
-		mov	[edx + co.cbp],ecx	; coroutine EBP
 		sub	ecx,12			; three "saved" registers
 		mov	[edx + co.csp],ecx	; coroutine ESP
 		xor	eax,eax			; zero out "saved" registers
@@ -138,60 +135,56 @@ coroutine_init:
 
 ;===========================================================================
 
-%assign	P_param		12
-%assign P_co		8
+%assign	P_param		8 + 16
+%assign P_co		4 + 16
 
 coroutine_resume:
-		enter	0,0
+		push	ebp
 		push	ebx
 		push	esi
 		push	edi
 
-		mov	eax,[ebp + P_param]
-		mov	edx,[ebp + P_co]
+		mov	eax,[esp + P_param]
+		mov	edx,[esp + P_co]
 
-		SYSLOG	"resume: co=%08X FROM=%08X TO=%08X",edx,ebp,dword [edx + co.cbp]
+		;SYSLOG	"resume: co=%08X FROM=%08X TO=%08X",edx,ebp,dword [edx + co.cbp]
 
 		mov	[edx + co.ysp],esp
-		mov	[edx + co.ybp],ebp
 		mov	esp,[edx + co.csp]
-		mov	ebp,[edx + co.cbp]
 
-		SYSLOG	"resume: RET=%08X",dword [ebp + 4]
+		;SYSLOG	"resume: RET=%08X",dword [ebp + 4]
 
 		pop	edi
 		pop	esi
 		pop	ebx
-		leave
+		pop	ebp
 		ret
 
 ;===========================================================================
 
-%assign	P_param		12
-%assign	P_co		8
+%assign	P_param		8 + 16
+%assign	P_co		4 + 16
 
 coroutine_yield:
-		enter	0,0
+		push	ebp
 		push	ebx
 		push	esi
 		push	edi
 
-		mov	eax,[ebp + P_param]
-		mov	edx,[ebp + P_co]
+		mov	eax,[esp + P_param]
+		mov	edx,[esp + P_co]
 
-		SYSLOG	"yield: co=%08X FROM=%08X TO=%08X",edx,ebp,dword [edx + co.ybp]
+		;SYSLOG	"yield: co=%08X FROM=%08X TO=%08X",edx,ebp,dword [edx + co.ybp]
 
 		mov	[edx + co.csp],esp
-		mov	[edx + co.cbp],ebp
 		mov	esp,[edx + co.ysp]
-		mov	ebp,[edx + co.ybp]
 
-		SYSLOG	"yield: RET=%08X",dword [ebp + 4]
+		;SYSLOG	"yield: RET=%08X",dword [ebp + 4]
 
 		pop	edi
 		pop	esi
 		pop	ebx
-		leave
+		pop	ebp
 		ret
 
 ;***************************************************************************
