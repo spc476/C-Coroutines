@@ -31,7 +31,7 @@ int coroutine_create(
   if (raw == MAP_FAILED)
     return errno;
   
-  blob = raw;calloc(1,stsize);
+  blob     = raw;
   co       = (coroutine__s *)&blob[stsize - sizeof(coroutine__s)];
   co->base = blob;
   co->size = stsize - sizeof(coroutine__s);
