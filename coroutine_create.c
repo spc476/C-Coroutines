@@ -18,7 +18,7 @@ int coroutine_create(
         uintptr_t     (*fun)(coroutine__s *,uintptr_t)
 )
 {
-  void         *raw;
+  void         *mem;
   char         *blob;
   coroutine__s *co;
   
@@ -28,11 +28,11 @@ int coroutine_create(
   if (stsize == 0)
     stsize = getpagesize();
   
-  raw = mmap(0,stsize,PROT_READ | PROT_WRITE,MAP_SHARED | MAP_ANONYMOUS | MAP_GROWSDOWN,-1,0);
-  if (raw == MAP_FAILED)
+  mem = mmap(0,stsize,PROT_READ | PROT_WRITE,MAP_SHARED | MAP_ANONYMOUS | MAP_GROWSDOWN,-1,0);
+  if (mem == MAP_FAILED)
     return errno;
   
-  blob     = raw;
+  blob     = mem;
   co       = (coroutine__s *)&blob[stsize - sizeof(coroutine__s)];
   co->base = blob;
   co->size = stsize - sizeof(coroutine__s);
