@@ -6,6 +6,7 @@
 #include <errno.h>
 #include <assert.h>
 #include <syslog.h>
+#include <unistd.h>
 #include <sys/mman.h>
 #include "coroutine.h"
 
@@ -25,7 +26,7 @@ int coroutine_create(
   assert(fun);
   
   if (stsize == 0)
-    stsize = 4192;
+    stsize = getpagesize();
   
   raw = mmap(0,stsize,PROT_READ | PROT_WRITE,MAP_SHARED | MAP_ANONYMOUS | MAP_GROWSDOWN,-1,0);
   if (raw == MAP_FAILED)
