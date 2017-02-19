@@ -12,6 +12,5 @@ int coroutine_free(coroutine__s *co)
   assert(co->base != NULL);
   assert(co->size >  0);
   
-  free(co->base);
-  return 0;
+  return munmap(co->base,co->size + sizeof(coroutine__s));
 }

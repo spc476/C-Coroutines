@@ -6,6 +6,7 @@
 #include <errno.h>
 #include <assert.h>
 #include <syslog.h>
+#include <sys/mman.h>
 #include "coroutine.h"
 
 extern void coroutine_init(coroutine__s *,uintptr_t (*)(coroutine__s *,uintptr_t));
@@ -16,6 +17,7 @@ int coroutine_create(
         uintptr_t     (*fun)(coroutine__s *,uintptr_t)
 )
 {
+  void         *raw;
   char         *blob;
   coroutine__s *co;
   
@@ -25,10 +27,11 @@ int coroutine_create(
   if (stsize == 0)
     stsize = 4192;
   
-  blob = calloc(1,stsize);
-  if (blob == NULL)
+  raw = mmap(0,stsize,PROT_READ | PROT_WRITE,MAP_SHARED | MAP_ANONYMOUS | MAP_GROWSDOWN,-1,0);
+  if (raw == MAP_FAILED)
     return errno;
   
+  blob = raw;calloc(1,stsize);
   co       = (coroutine__s *)&blob[stsize - sizeof(coroutine__s)];
   co->base = blob;
   co->size = stsize - sizeof(coroutine__s);
