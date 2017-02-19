@@ -10,7 +10,11 @@
 #include <sys/mman.h>
 #include "coroutine.h"
 
-extern void coroutine_init(coroutine__s *,uintptr_t (*)(coroutine__s *,uintptr_t));
+extern void coroutine_init(
+                            coroutine__s *,
+                            uintptr_t (*)(coroutine__s *,uintptr_t),
+                            void         *
+                          );
 
 int coroutine_create(
         coroutine__s  **pco,
@@ -35,11 +39,11 @@ int coroutine_create(
   blob     = mem;
   co       = (coroutine__s *)&blob[stsize - sizeof(coroutine__s)];
   co->base = blob;
-  co->size = stsize - sizeof(coroutine__s);
+  co->size = stsize;
 
   syslog(LOG_DEBUG,"create: stack=%p",co->base);
 
-  coroutine_init(co,fun);
+  coroutine_init(co,fun,co);
   *pco = co;
   return 0;
 }

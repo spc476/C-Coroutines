@@ -53,14 +53,14 @@ start_it_up:	push	eax
 
 ;===========================================================================
 
+%assign P_stack		16
 %assign	P_fun		12
 %assign P_co		8
 
 coroutine_init:
 		enter	0,0
 		mov	edx,[ebp + P_co]
-		mov	eax,[edx + co.base]	; point to the top of
-		add	eax,[edx + co.size]	; the coroutine stack.
+		mov	eax,[ebp + P_stack]	; point to the top of
 
 	;------------------------------------------------------------
 	; Create the stack for resuming to start_it_up().  The stack
