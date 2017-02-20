@@ -76,7 +76,7 @@ int main(int argc,char **argv)
     syslog(LOG_DEBUG,"argc=%p",(void *)&argc);
     coroutine_create(&co,0,test);
     syslog(LOG_DEBUG,"done with coroutine_create()");
-    r = coroutine_yield(co,r);
+    r = coroutine_yield(co,0);
     printf("test1=%" PRIuPTR "\n",r);
     r = coroutine_yield(co,r);
     printf("test2=%" PRIuPTR "\n",r);
