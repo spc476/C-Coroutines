@@ -69,16 +69,13 @@ int main(void)
     uintptr_t    r;
     
     coroutine_create(&co,0,test);
-    r = coroutine_yield(co,0);
-    printf("test1=%" PRIuPTR "\n",r);
-    r = coroutine_yield(co,r);
-    printf("test2=%" PRIuPTR "\n",r);
     
     for (int i = 0 ; i < 10 ; i++)
     {
       r = coroutine_yield(co,r);
-      printf("test3=%" PRIuPTR "\n",r);
+      printf("test-%d=%" PRIuPTR "\n",i,r);
     }
+
     coroutine_free(co);
   }
   
