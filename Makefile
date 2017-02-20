@@ -1,5 +1,5 @@
 
-CC       = gcc -std=c99 -Wall -Wextra -pedantic
+CC       = c99
 CFLAGS   = -g
 LDFLAGS  = -g
 LDLIBS   =
