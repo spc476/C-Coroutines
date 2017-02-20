@@ -1,6 +1,5 @@
 
 #include <stdlib.h>
-#include <errno.h>
 #include <assert.h>
 #include "coroutine.h"
 
