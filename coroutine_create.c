@@ -1,12 +1,7 @@
 
-#ifdef __GNUC__
-#  define _GNU_SOURCE
-#endif
-
+#include <stdlib.h>
 #include <errno.h>
 #include <assert.h>
-#include <unistd.h>
-#include <sys/mman.h>
 #include "coroutine.h"
 
 extern void coroutine_init(
@@ -29,20 +24,11 @@ int coroutine_create(
   assert(fun);
   
   if (stsize == 0)
-    stsize = getpagesize();
-    
-  mem = mmap(
-              0,
-              stsize,
-              PROT_READ  | PROT_WRITE,
-              MAP_SHARED | MAP_ANONYMOUS | MAP_GROWSDOWN,
-              -1,
-              0
-            );
+    stsize = 8192;
   
-  if (mem == MAP_FAILED)
-    return errno;
-    
+  if ((mem = malloc(stsize)) == NULL)
+    return -1;
+  
   blob     = mem;
   co       = (coroutine__s *)&blob[stsize - sizeof(coroutine__s)];
   co->base = blob;

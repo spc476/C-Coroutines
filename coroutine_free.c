@@ -1,14 +1,14 @@
 
+#include <stdlib.h>
 #include <assert.h>
-#include <sys/mman.h>
 #include "coroutine.h"
 
 int coroutine_free(coroutine__s *co)
 {
   assert(co       != NULL);
-  assert(co->base != MAP_FAILED);
   assert(co->base != NULL);
   assert(co->size >  0);
   
-  return munmap(co->base,co->size);
+  free(co->base);
+  return 0;
 }
