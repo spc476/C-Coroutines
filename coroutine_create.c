@@ -15,7 +15,6 @@ int coroutine_create(
         uintptr_t     (*fun)(coroutine__s *,uintptr_t)
 )
 {
-  void         *mem;
   char         *blob;
   coroutine__s *co;
   
@@ -25,10 +24,9 @@ int coroutine_create(
   if (stsize == 0)
     stsize = 8192;
   
-  if ((mem = malloc(stsize)) == NULL)
+  if ((blob = malloc(stsize)) == NULL)
     return -1;
   
-  blob     = mem;
   co       = (coroutine__s *)&blob[stsize - sizeof(coroutine__s)];
   co->base = blob;
   co->size = stsize;
