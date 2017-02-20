@@ -81,6 +81,12 @@ int main(int argc,char **argv)
     r = coroutine_yield(co,r);
     printf("test2=%" PRIuPTR "\n",r);
     syslog(LOG_DEBUG,"argc=%p",(void *)&argc);
+    
+    for (int i = 0 ; i < 10 ; i++)
+    {
+      r = coroutine_yield(co,r);
+      printf("test3=%" PRIuPTR "\n",r);
+    }
     coroutine_free(co);
   }
   

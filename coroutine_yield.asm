@@ -2,8 +2,6 @@
 		bits	32
 		global	coroutine_init
 		global	coroutine_yield
-		extern	abort
-		extern	syslog
 
 ;***************************************************************************
 		section	.text
@@ -26,22 +24,21 @@
 ;
 ; After L_fun returns, we return it's final return code using
 ; coroutine_yield().  How we handle a coroutine_resume() after that is still
-; up in the air.  For right now, I'm just calling abort(), but I could
-; simply have the code just loop, continously returning the paramter passed
-; in from coroutine_resume().  Something to keep in mind.
+; up in the air.  For right now, simply return the passed in value back to
+; coroutine_yield().  I could call abort() ...  I don't know ...
 ;---------------------------------------------------------------------------
 
 %assign L_co		-4
 %assign L_fun		-8
+%assign C_param		-12
 
 start_it_up:	push	eax
 		push	dword [ebp + L_co]
 		call	[ebp + L_fun]
 
-		push	eax
-		push	dword [ebp + L_co]
+do_it_again:	mov	[ebp + C_param],eax
 		call	coroutine_yield
-		jmp	abort
+		jmp	do_it_again
 
 ;===========================================================================
 
