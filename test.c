@@ -2,7 +2,6 @@
 #include <inttypes.h>
 #include <stdbool.h>
 #include <stdio.h>
-#include <cgilib6/crashreport.h>
 #include <syslog.h>
 #include "coroutine.h"
 
@@ -67,10 +66,6 @@ static uintptr_t test(coroutine__s *self,uintptr_t d)
 
 int main(int argc,char **argv)
 {
-  crashreport(SIGSEGV);
-  crashreport(SIGILL);
-  crashreport(SIGABRT);
-  
   (void)argv;
   syslog(LOG_INFO,"STARTING");
   

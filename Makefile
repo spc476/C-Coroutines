@@ -2,7 +2,7 @@
 CC       = gcc -std=c99 -Wall -Wextra -pedantic
 CFLAGS   = -g
 LDFLAGS  = -g
-LDLIBS   = -lcgi6
+LDLIBS   =
 ASM      = nasm -f elf
 ASMFLAGS = -g
 AR       = ar rscu
