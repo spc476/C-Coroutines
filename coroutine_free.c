@@ -1,6 +1,4 @@
 
-#include <stdlib.h>
-#include <errno.h>
 #include <assert.h>
 #include <sys/mman.h>
 #include "coroutine.h"

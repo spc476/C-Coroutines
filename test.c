@@ -2,7 +2,6 @@
 #include <inttypes.h>
 #include <stdbool.h>
 #include <stdio.h>
-#include <syslog.h>
 #include "coroutine.h"
 
 /**************************************************************************/
@@ -54,34 +53,26 @@ static uintptr_t routine3(coroutine__s *self,uintptr_t d)
 
 static uintptr_t test(coroutine__s *self,uintptr_t d)
 {
-  syslog(LOG_DEBUG,"test HELLO");
   printf("Hello %" PRIuPTR "\n",d);
   d = coroutine_yield(self,d + 10);
-  syslog(LOG_DEBUG,"test YIELD");
   printf("Goodbye %" PRIuPTR "\n",d);
   return d + 10;
 }
 
 /**************************************************************************/
 
-int main(int argc,char **argv)
+int main(void)
 {
-  (void)argv;
-  syslog(LOG_INFO,"STARTING");
-  
   if (true)
   {
     coroutine__s *co;
     uintptr_t    r;
     
-    syslog(LOG_DEBUG,"argc=%p",(void *)&argc);
     coroutine_create(&co,0,test);
-    syslog(LOG_DEBUG,"done with coroutine_create()");
     r = coroutine_yield(co,0);
     printf("test1=%" PRIuPTR "\n",r);
     r = coroutine_yield(co,r);
     printf("test2=%" PRIuPTR "\n",r);
-    syslog(LOG_DEBUG,"argc=%p",(void *)&argc);
     
     for (int i = 0 ; i < 10 ; i++)
     {
