@@ -13,7 +13,7 @@ static uintptr_t foo(coroutine__s *self,uintptr_t d)
   d = coroutine_yield(self,d);
   return d;
 }
- 
+
 static uintptr_t routine1(coroutine__s *self,uintptr_t d)
 {
   while(true)
@@ -64,7 +64,7 @@ int main(int argc,char **argv)
   crashreport(SIGSEGV);
   crashreport(SIGILL);
   crashreport(SIGABRT);
-
+  
   (void)argv;
   syslog(LOG_INFO,"STARTING");
   

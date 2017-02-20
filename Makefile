@@ -4,7 +4,7 @@ CFLAGS   = -g
 LDFLAGS  = -g
 LDLIBS   = -lcgi6
 ASM      = nasm -f elf
-ASMFLAGS = -g 
+ASMFLAGS = -g
 AR       = ar rscu
 
 %.a :
