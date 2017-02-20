@@ -66,7 +66,7 @@ int main(void)
   if (true)
   {
     coroutine__s *co;
-    uintptr_t    r;
+    uintptr_t    r = 0;
     
     coroutine_create(&co,0,test);
     
