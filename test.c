@@ -21,6 +21,8 @@ static uintptr_t routine1(coroutine__s *self,uintptr_t d)
     printf("routine1=%" PRIuPTR "\n",d);
     d = foo(self,d + 100);
   }
+  
+  return 0;
 }
 
 /**************************************************************************/
@@ -32,6 +34,8 @@ static uintptr_t routine2(coroutine__s *self,uintptr_t d)
     printf("routine2=%" PRIuPTR "\n",d);
     d = coroutine_yield(self,d + 1);
   }
+  
+  return 0;
 }
 
 /**************************************************************************/
@@ -43,6 +47,8 @@ static uintptr_t routine3(coroutine__s *self,uintptr_t d)
     printf("routine3=%" PRIuPTR "\n",d);
     d = coroutine_yield(self,d + 2);
   }
+  
+  return 0;
 }
 
 /**************************************************************************/
