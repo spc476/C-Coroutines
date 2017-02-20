@@ -14,17 +14,14 @@ AR       = ar rscu
 	$(ASM) $(ASMFLAGS) -l $(*F).list -o $@ $<
 
 .PHONY  : all clean
-all     : test sstest
+all     : test
 test    : test.o libco.a
-sstest  : sstest.o swapstack.o
 libco.a : coroutine_create.o coroutine_free.o coroutine_yield.o
 
 coroutine_yield.o  : coroutine_yield.asm
-swapstack.o        : swapstack.asm
 coroutine_create.o : coroutine.h
 coroutine_free.o   : coroutine.h
-sstest.o           : coroutine.h
 test.o             : coroutine.h
 
 clean:
-	$(RM) *.o *~ *.a test core.* sstest *.list
+	$(RM) *.o *~ *.a test core.* *.list
