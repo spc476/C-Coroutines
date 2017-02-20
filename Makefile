@@ -14,14 +14,16 @@ AR       = ar rscu
 	$(ASM) $(ASMFLAGS) -l $(*F).list -o $@ $<
 
 .PHONY  : all clean
-all     : test
+all     : test iter
 test    : test.o libco.a
+iter    : iter.o libco.a
 libco.a : coroutine_create.o coroutine_free.o coroutine_yield.o
 
 coroutine_yield.o  : coroutine_yield.asm
 coroutine_create.o : coroutine.h
 coroutine_free.o   : coroutine.h
 test.o             : coroutine.h
+iter.o             : coroutine.h
 
 clean:
-	$(RM) *.o *~ *.a test core.* *.list
+	$(RM) test iter *.o *~ *.a core.* *.list
