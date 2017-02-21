@@ -1,7 +1,7 @@
 
 		bits	32
-		global	coroutine_init
-		global	coroutine_yield
+		global	coroutine_init32
+		global	coroutine_yield32
 
 ;***************************************************************************
 		section	.text
@@ -37,7 +37,7 @@ start_it_up:	push	eax
 		call	[ebp + L_fun]
 
 do_it_again:	mov	[ebp + C_param],eax
-		call	coroutine_yield
+		call	coroutine_yield32
 		jmp	do_it_again
 
 ;===========================================================================
@@ -46,7 +46,7 @@ do_it_again:	mov	[ebp + C_param],eax
 %assign	P_fun		8
 %assign P_co		4
 
-coroutine_init:
+coroutine_init32:
 		mov	edx,[esp + P_co]
 		mov	eax,[esp + P_stack]	; stack to switch to
 
@@ -93,7 +93,7 @@ coroutine_init:
 %assign	P_param		8 + 16
 %assign	P_co		4 + 16
 
-coroutine_yield:
+coroutine_yield32:
 		push	ebp			; save callee saved registers
 		push	ebx
 		push	esi
