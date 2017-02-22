@@ -17,9 +17,11 @@ AR       = ar rscu
 all     : test iter
 test    : test.o libco.a
 iter    : iter.o libco.a
-libco.a : coroutine_create.o coroutine_free.o coroutine_yield.o
+libco.a : coroutine_create.o coroutine_free.o	\
+		coroutine_yield.o 		\
+		coroutine_yield-x86-64.o
 
-coroutine_yield.o  : coroutine_yield.asm
+coroutine_yield-x86-64.o : ASM = nasm -f elf64
 coroutine_create.o : coroutine.h
 coroutine_free.o   : coroutine.h
 test.o             : coroutine.h
