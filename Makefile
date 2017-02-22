@@ -3,7 +3,7 @@ CC       = c99
 CFLAGS   = -g
 LDFLAGS  = -g
 LDLIBS   =
-ASM      = nasm -f elf
+ASM      = nasm -f elf32
 ASMFLAGS = -g
 AR       = ar rscu
 
