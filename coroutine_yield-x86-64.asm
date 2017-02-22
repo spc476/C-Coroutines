@@ -25,7 +25,6 @@ do_it_again:	mov	rdi,rax
 ;	RDI -> co
 ;	RSI -> fun
 ;	RDX -> stack
-;
 ;	RAX -> 0
 ;	RCX -> adjusted stack
 ;
@@ -39,6 +38,7 @@ do_it_again:	mov	rdi,rax
 ;	r14			8
 ;	r15			0
 ;
+
 coroutine_init64:
 		xor	rax,rax
 		lea	rcx,[rdx - 9*8]
@@ -64,8 +64,8 @@ coroutine_yield64:
 		push	r14
 		push	r15
 
-		mov	rax,rsi
-		xchg	rsp,[rdi]
+		mov	rax,rsi		; value to return
+		xchg	rsp,[rdi]	; YIELD!
 
 		pop	r15
 		pop	r14
