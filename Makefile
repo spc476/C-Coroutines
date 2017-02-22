@@ -22,7 +22,7 @@ clean:
 test    : test.o libco.a
 iter    : iter.o libco.a
 libco.a : coroutine_create.o coroutine_free.o	\
-		coroutine_yield.o 		\
+		coroutine_yield-x86-32.o 	\
 		coroutine_yield-x86-64.o
 
 coroutine_yield-x86-64.o : ASM = nasm -f elf64
