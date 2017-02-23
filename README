@@ -11,9 +11,6 @@ There are two example programs, test and iter.  test just runs some simple
 tests while iter will create a tree from lines of input (either stdin or a
 file), then use a coroutine to iterate through the tree.
 
-NOTE:	As of this time, only the x86-32 bit version works.  The x86-64 bit
-	version is still a work in progress.
-
 API:
 
 extern int coroutine_create(
