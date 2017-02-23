@@ -1,0 +1,71 @@
+
+                    An Implementaion of Coroutines for C
+
+This is not based on setjmp()/longjmp() or ucontext.h but is a ground-up
+implementation of coroutines for C.  This involves the use of assembly to
+ensure the coroutine stack intialization and stack switching.  The code may
+look simple, but it wasn't simple to write. but it is straightforward
+(mostly).
+
+There are two example programs, test and iter.  test just runs some simple
+tests while iter will create a tree from lines of input (either stdin or a
+file), then use a coroutine to iterate through the tree.
+
+NOTE:	As of this time, only the x86-32 bit version works.  The x86-64 bit
+	version is still a work in progress.
+
+API:
+
+extern int coroutine_create(
+	coroutine__s **pco,
+	size_t         stsize,
+	uintptr_t    (*fun)(coroutine__s *,uintptr_t)
+);
+
+	Creates a coroutine context, which will include a stack of stsize;
+	if stsize is 0, a default size is automatically provided (which
+	*should* be big enough for most uses).  This will return 0 on
+	success, non-zero on failure.
+
+	The function passed in takes two parameters, a coroutine__s * (which
+	will refer to its own context when called) and a uintptr_t (an
+	integer quantity large enough to hold a pointer).  It can return
+	values back via coroutine_yield() or simply returning a value.  Once
+	the function returns, it will not be called on subsequent calls to
+	coroutine_yield() (see coroutine_yield() for more information).
+
+extern void coroutine_init(
+	coroutine__s  *co,
+	uintptr_t    (*fun)(coroutine__s *,uintptr_t),
+	void          *stack
+);
+
+	Initializes the coroutine stack so that the first call to
+	coroutine_yield() will call the given function.  This is not meant
+	to be called from user code but is rather an internal method to
+	coroutine_create().  The stack paramter should point to the stack
+	top (highest memory address on most systems).
+
+extern uintptr_t coroutine_yield(
+	coroutine__s *co,
+	uintptr_t     data
+);
+
+	Passes control to the coroutine, passing data to it.  This call is
+	symetrical, being used on both sides to pass control back and forth. 
+	Once the coroutine's main function does an actual return, further
+	calls to coroutine_yield() to said coroutine will immediately yield
+	back, returning data directly.
+
+	NOTE:	setjmp()/longjmp() will *NOT* work across coroutine stacks.
+		setjmp()/longjmp() will work within a coroutine stack.
+
+extern int coroutine_free(
+	coroutine__s *co
+);
+
+	Free up the memory used for co and its stack.  No other resources
+	are reclaimed (like open files).  calling coroutine_free() on a
+	coroutine currently running is undefined (if you are lucky, the
+	program will crash immediate).  The coroutine need not be finished
+	running when this is called.
