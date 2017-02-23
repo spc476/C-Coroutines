@@ -31,12 +31,12 @@
 %assign		L_co	-8
 %assign		L_fun	-16
 
-start_it_up:	mov	rdi,rax
-		mov	rsi,[rbp + L_co]
+start_it_up:	mov	rdi,[rbp + L_co]
+		mov	rsi,rax
 		call	[rbp + L_fun]
 
-do_it_again:	mov	rdi,rax
-		mov	rsi,[rbp + L_co]
+do_it_again:	mov	rdi,[rbp + L_co]
+		mov	rsi,rax
 		call	coroutine_yield64
 		jmp	do_it_again
 
