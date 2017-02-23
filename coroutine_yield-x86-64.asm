@@ -72,6 +72,7 @@ coroutine_init64:
 		mov	[rcx + 16],rax	; "saved" r13
 		mov	[rcx + 8],rax	; "saved" r14
 		mov	[rcx],rax	; "saved" r15
+		mov	[rdi],rcx
 		ret
 
 ;===========================================================================
