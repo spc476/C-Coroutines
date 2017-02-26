@@ -61,13 +61,14 @@ do_it_again:	mov	rdi,[rbp + L_co]
 ;
 
 coroutine_init64:
-		xor	rax,rax
+		lea	rax,[start_it_up]
 		lea	rcx,[rdx - 9*8]
 		
 		mov	[rcx + 64],rdi	; L_co
 		mov	[rcx + 56],rsi	; L_fun
-		mov	qword [rcx + 48],start_it_up
+		mov	[rcx + 48],rax  ; start_it_up
 		mov	[rcx + 40],rdx	; "saved" rbp
+		xor	eax,eax
 		mov	[rcx + 32],rax	; "saved" rbx
 		mov	[rcx + 24],rax	; "saved" r12
 		mov	[rcx + 16],rax	; "saved" r13
