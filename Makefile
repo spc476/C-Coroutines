@@ -19,11 +19,23 @@
 #
 ########################################################################
 
+UNAME := $(shell uname)
+
+ifeq ($(UNAME),Darwin)
+  FORMAT32 = macho32
+  FORMAT64 = macho64
+endif
+
+ifeq ($(UNAME),Linux)
+  FORMAT32 = elf32
+  FORMAT64 = elf64
+endif
+
 CC       = c99
 CFLAGS   = -g
 LDFLAGS  = -g
 LDLIBS   =
-ASM      = nasm -f elf32
+ASM      = nasm -f $(FORMAT32)
 ASMFLAGS = -g
 AR       = ar rscu
 
@@ -45,7 +57,7 @@ libco.a : coroutine_create.o coroutine_free.o	\
 		coroutine_yield-x86-32.o 	\
 		coroutine_yield-x86-64.o
 
-coroutine_yield-x86-64.o : ASM = nasm -f elf64
+coroutine_yield-x86-64.o : ASM = nasm -f $(FORMAT64)
 coroutine_create.o       : coroutine.h
 coroutine_free.o         : coroutine.h
 test.o                   : coroutine.h
