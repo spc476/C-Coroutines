@@ -22,11 +22,13 @@
 UNAME := $(shell uname)
 
 ifeq ($(UNAME),Darwin)
+  OBJS     = coroutine_yield-x86-64.o
   FORMAT32 = macho32
   FORMAT64 = macho64
 endif
 
 ifeq ($(UNAME),Linux)
+  OBJS     = coroutine_yield-x86-32.o coroutine_yield-x86-64.o
   FORMAT32 = elf32
   FORMAT64 = elf64
 endif
@@ -53,9 +55,7 @@ clean:
 	
 test    : test.o libco.a
 iter    : iter.o libco.a
-libco.a : coroutine_create.o coroutine_free.o	\
-		coroutine_yield-x86-32.o 	\
-		coroutine_yield-x86-64.o
+libco.a : coroutine_create.o coroutine_free.o $(OBJS)
 
 coroutine_yield-x86-64.o : ASM = nasm -f $(FORMAT64)
 coroutine_create.o       : coroutine.h
