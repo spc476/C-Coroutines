@@ -20,6 +20,7 @@
 ;***************************************************************************
 
 		bits	64
+		default	rel
 		global	coroutine_init64
 		global	coroutine_yield64
 
