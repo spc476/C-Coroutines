@@ -41,6 +41,9 @@ typedef struct
   void   *csp;
   void   *base;
   size_t  size;
+#if defined(__x86_64)
+  char    filler[8];
+#endif
 } coroutine__s;
 
 
