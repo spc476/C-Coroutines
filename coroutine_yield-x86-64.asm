@@ -23,6 +23,8 @@
 		default	rel
 		global	coroutine_init64
 		global	coroutine_yield64
+		global	_coroutine_init64	; for Mac OS-X
+		global	_coroutine_yield64	; (how archaic!)
 
 ;***************************************************************************
 		section	.text
@@ -61,6 +63,7 @@ do_it_again:	mov	rdi,[rbp + L_co]
 ;
 
 coroutine_init64:
+_coroutine_init64:
 		lea	rax,[start_it_up]
 		lea	rcx,[rdx - 9*8]
 		
@@ -80,6 +83,7 @@ coroutine_init64:
 ;===========================================================================
 
 coroutine_yield64:
+_coroutine_yield64:
 		push	rbp
 		push	rbx
 		push	r12
