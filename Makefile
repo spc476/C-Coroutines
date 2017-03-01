@@ -49,7 +49,7 @@ AR       = ar rscu
 
 .PHONY : all clean
 
-all  : test iter
+all  : test iter megaco
 clean:
 	$(RM) test iter megaco *.o *~ *.a core.* *.list
 	
