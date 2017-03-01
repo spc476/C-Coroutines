@@ -51,10 +51,12 @@ AR       = ar rscu
 
 all  : test iter
 clean:
-	$(RM) test iter *.o *~ *.a core.* *.list
+	$(RM) test iter megaco *.o *~ *.a core.* *.list
 	
 test    : test.o libco.a
 iter    : iter.o libco.a
+megaco  : megaco.o libco.a
+megaco  : LDLIBS = -lrt
 libco.a : coroutine_create.o coroutine_free.o $(OBJS)
 
 coroutine_yield-x86-64.o : ASM = nasm -f $(FORMAT64)
