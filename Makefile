@@ -49,14 +49,16 @@ AR       = ar rscu
 
 .PHONY : all clean
 
-all  : test iter megaco
+all  : test iter megaco benchco
 clean:
-	$(RM) test iter megaco *.o *~ *.a core.* *.list
+	$(RM) test iter megaco benchco *.o *~ *.a core.* *.list
 	
 test    : test.o libco.a
 iter    : iter.o libco.a
 megaco  : megaco.o libco.a
 megaco  : LDLIBS = -lrt
+benchco : benchco.o libco.a
+benchco : LDLIBS = -lrt
 libco.a : coroutine_create.o coroutine_free.o $(OBJS)
 
 coroutine_yield-x86-64.o : ASM = nasm -f $(FORMAT64)
