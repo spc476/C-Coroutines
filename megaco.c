@@ -91,19 +91,19 @@ int main(int argc,char *argv[])
   }
   
   runtest(&total,co,max);
-  printf("Initial coroutine_yield() %ld %ld %ld\n",(long)total.tv_sec,(long)total.tv_nsec,(long)(total.tv_nsec / max));
+  printf("Initial coroutine_yield() %ld %ld %ld\n",(long)total.tv_sec,(long)total.tv_nsec,(long)(total.tv_nsec / max)/2);
   
   runtest(&total,co,max);
-  printf("Second  coroutine_yield() %ld %ld %ld\n",(long)total.tv_sec,(long)total.tv_nsec,(long)(total.tv_nsec / max));
+  printf("Second  coroutine_yield() %ld %ld %ld\n",(long)total.tv_sec,(long)total.tv_nsec,(long)(total.tv_nsec / max)/2);
  
   runtest(&total,co,max);
-  printf("Third   coroutine_yield() %ld %ld %ld\n",(long)total.tv_sec,(long)total.tv_nsec,(long)(total.tv_nsec / max));
+  printf("Third   coroutine_yield() %ld %ld %ld\n",(long)total.tv_sec,(long)total.tv_nsec,(long)(total.tv_nsec / max)/2);
  
   runtest(&total,co,max);
-  printf("Fourth  coroutine_yield() %ld %ld %ld\n",(long)total.tv_sec,(long)total.tv_nsec,(long)(total.tv_nsec / max));
+  printf("Fourth  coroutine_yield() %ld %ld %ld\n",(long)total.tv_sec,(long)total.tv_nsec,(long)(total.tv_nsec / max)/2);
   
   runtest(&total,co,max);
-  printf("Final   coroutine_yield() %ld %ld %ld\n",(long)total.tv_sec,(long)total.tv_nsec,(long)(total.tv_nsec / max));
+  printf("Final   coroutine_yield() %ld %ld %ld\n",(long)total.tv_sec,(long)total.tv_nsec,(long)(total.tv_nsec / max)/2);
   
   for (size_t i = 0 ; i < max ; i++)
     free(co[i]);
